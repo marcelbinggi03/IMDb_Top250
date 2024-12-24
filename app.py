@@ -93,5 +93,24 @@ filter_by_runtime= st.sidebar.selectbox(
 
 
 # Filtered table (based on filter on the sidebar)
-# ---- code here ---- #
+filtered_data = imdb_data.copy()
+
+runtime_mapping = {
+    "Up to 1.5 hours": (0, 90),
+    "1.5 to 2 hours": (90, 120),
+    "2 to 2.5 hours": (120, 150),
+    "2.5 to 3 hours": (150, 180),
+    "More than 3 hours": (180, float("inf"))
+}
+
+runtime_min, runtime_max = runtime_mapping[filter_by_runtime]
+
+filtered_data = filtered_data[(filtered_data["year"] >= filter_by_year[0]) &
+                              (filtered_data["year"] <= filter_by_year[1])]
+
+# Split genres and filter by runtime
+filtered_data = filtered_data.assign(genre=filtered_data['genre'].str.split(",")).explode('genre')
+
+st.header("Filtered Movies Table")
+st.dataframe(filtered_data)
 
