@@ -23,7 +23,23 @@ imdb_data["budget"] = preprocess_column("budget")
 imdb_data["box_office"] = preprocess_column("box_office")
 
 #Treemap based on Genre
-# ---- code here ---- #
+# Set Treemap based on Genre
+st.header("Treemap: Movies by Genre")
+
+# Preprocess genre data (splitting multiple genres into individual rows)
+genre_data = imdb_data.copy()
+genre_data = genre_data.assign(genre=genre_data['genre'].str.split(",")).explode('genre')
+
+# Plot treemap
+fig = px.treemap(
+    genre_data,
+    path=['genre', 'name'],
+    values='rating',
+    color='rating',
+    color_continuous_scale='Blues',
+    title="Treemap of Movies by Genre"
+)
+st.plotly_chart(fig)
 
 #Set sidebar title
 st.sidebar.title('Settings')
@@ -79,4 +95,3 @@ filter_by_runtime= st.sidebar.selectbox(
 # Filtered table (based on filter on the sidebar)
 # ---- code here ---- #
 
-#Halo gesss
