@@ -4,11 +4,11 @@ import pandas as pd
 import plotly.express as px
 
 #Set Title Dashboard
-st.title("IMDB Top 250 Movies Dashboard")
+st.title("IMDb Top 250 Movies Dashboard")
 
 #Set header
 st.header("Data Preview")
-st.write("Berikut ini adalah dataset yang berisi 250 film dengan rating tertinggi menurut IMDB")
+st.write("Berikut ini adalah dataset yang berisi 250 film dengan rating tertinggi menurut IMDb")
 
 #Load data
 path = "IMDB Top 250 Movies.csv"
@@ -22,7 +22,8 @@ def preprocess_column(column):
 imdb_data["budget"] = preprocess_column("budget")
 imdb_data["box_office"] = preprocess_column("box_office")
 
-#Treemap based on Genre
+
+#Treemap basedon Genre
 # Set Treemap based on Genre
 st.header("Treemap: Movies by Genre")
 
@@ -43,7 +44,8 @@ st.plotly_chart(fig)
 
 #Set sidebar title
 st.sidebar.title('Settings')
-st.sidebar.write('Atur dashboard melalui pengaturan di bawah')\
+st.sidebar.write('Atur dashboard melalui pengaturan di bawah')
+st.sidebar.subheader("Pengaturan Scatter Plot")
 
 # Adding sidebar and selectbox for scatter plot axis
 x_axis= st.sidebar.selectbox(
@@ -58,6 +60,7 @@ y_axis = st.sidebar.selectbox(
 #Scatter plot
 st.header("Scatter Plot")
 st.subheader(f"Scatter Plot: {x_axis.title()} vs {y_axis.title()}")
+
 fig = px.scatter(
     imdb_data,
     x=x_axis,
@@ -70,6 +73,7 @@ st.plotly_chart(fig)
 
 #Add filter by year (slider), filter by runtime to sidebar
 
+st.sidebar.subheader("Pengaturan Filter")
 #Add filter by year (slider)
 # Define the range of years
 start_year = 1921
@@ -93,5 +97,3 @@ filter_by_runtime= st.sidebar.selectbox(
 
 
 # Filtered table (based on filter on the sidebar)
-# ---- code here ---- #
-
