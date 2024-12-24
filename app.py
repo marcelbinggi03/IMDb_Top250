@@ -95,26 +95,48 @@ filter_by_runtime= st.sidebar.selectbox(
     "2.5 to 3 hours", "More than 3 hours"]
 )
 
+#Convert run_time to minutes
+def convert_runtime(runtime):
+    if isinstance(runtime, str):
+        # Check if the runtime contains hours
+        if 'h' in runtime:
+            parts = runtime.split('h')
+            hours = int(parts[0].strip())
+            minutes = int(parts[1].replace('m', '').strip()) if 'm' in parts[1] else 0
+            return hours * 60 + minutes
+        # Handle case where only minutes are provided (e.g., '45m')
+        elif 'm' in runtime:
+            minutes = int(runtime.replace('m', '').strip())
+            return minutes
+    return 0  # Return 0 if the runtime value is 'Not Available' or invalid
+
+
+imdb_data['run_time_minutes'] = imdb_data['run_time'].apply(convert_runtime)
 
 # Filtered table (based on filter on the sidebar)
 filtered_data = imdb_data.copy()
 
-runtime_mapping = {
+# Define runtime ranges
+runtime_ranges = {
     "Up to 1.5 hours": (0, 90),
     "1.5 to 2 hours": (90, 120),
     "2 to 2.5 hours": (120, 150),
     "2.5 to 3 hours": (150, 180),
-    "More than 3 hours": (180, float("inf"))
+    "More than 3 hours": (180, float('inf'))
 }
+selected_runtime_range = runtime_ranges[filter_by_runtime]
 
-runtime_min, runtime_max = runtime_mapping[filter_by_runtime]
+# Filter dataset
+filtered_data = imdb_data[
+    (imdb_data['year'] >= filter_by_year[0]) & (imdb_data['year'] <= filter_by_year[1]) &
+    (imdb_data['run_time_minutes'] >= selected_runtime_range[0]) & 
+    (imdb_data['run_time_minutes'] < selected_runtime_range[1])
+]
 
-filtered_data = filtered_data[(filtered_data["year"] >= filter_by_year[0]) &
-                              (filtered_data["year"] <= filter_by_year[1])]
-
-# Split genres and filter by runtime
-filtered_data = filtered_data.assign(genre=filtered_data['genre'].str.split(",")).explode('genre')
-
-st.header("Filtered Movies Table")
+# Display filtered DataFrame
+st.header("Filtered Data")
+st.write("Data ditampilkan berdasarkan Year dan Runtime")
 st.dataframe(filtered_data)
+
+
 
